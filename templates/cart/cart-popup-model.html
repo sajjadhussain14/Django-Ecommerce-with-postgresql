@@ -1,0 +1,51 @@
+<div class="modal fade" id="modalCart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog  " role="document" style="max-width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="added-to-cart-title">Added to Cart</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img id="pop-img" src=" " alt="Product Image" class="img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <p class="mb-1" id="pop-title"> </p>
+                        <p class="mb-1" >Qty:<span id="pop-quantity">   </span>  </p>
+                        <p class="mb-3" >  Price: $<span id="pop-price">   </span></p>
+                        <ul class="list-group" id="attr-group">
+                            uuu
+                        </ul>
+                        <p class="mb-1" > Cart Subtotal: $<span id="pop-cart_total_amount">    </span></p>
+                        <p class="mb-3" >Items in Cart: <span id="pop-cart_total_qty">  </span></p>
+                        <a href="/cart" class="btn btn-primary btn-block">Cart & Checkout</a>
+                        <a href="/cart/back-to-shop" class="btn btn-secondary btn-block"  >Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h2 class="mb-3 w-100 text-center">You May Also Buy</h2>
+                <div class="  d-flex justify-content-start align-content-start  ">
+                    {% for related_product in related_products %}
+                    <div class="col-3">
+                        <a href="/product/{{related_product.id}}" class="product float-left">
+                        <span class="image text-left mb-2 d-block ">
+                        <img src="{{ related_product.images.first.image.url }}"  style="max-height:60px"  alt="Product Image" class="img-fluid">
+                        </span>
+                        </a>
+                        <div class="card-body">
+                            {% if related_product.brand %} 
+                            <h5 class="card-title">{{related_product.brand}}</h5>
+                            {% endif %}
+                            <p class="card-text">{{ related_product.title|slice:":15" }}{% if related_product.title|length > 15 %}...{% endif %}</p>
+                            <p class="card-text">${{related_product.price}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

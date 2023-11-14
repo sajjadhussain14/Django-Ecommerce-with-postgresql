@@ -1,0 +1,81 @@
+{% load static %}
+<div class="top-header pt-2">
+   <p>Free shipping for orders over $20</p>
+</div>
+<header>
+   <div class="header-container row">
+      <div class="col-lg-2 col-md-3 col-sm-3 col-10 logo mb-2">
+         {{ abc }}
+         <a title="" href="/"><img alt="logo" src="{{ logo_img }}" /></a>
+      </div>
+      <div class="col-lg-8 col-md-6 col-sm-6">
+         <nav class="navbar navbar-expand-lg navbar-light no-bg">
+            <div class="container-fluid">
+               <button title="toggle" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                  aria-expanded="false" aria-label="Toggle navigation" name="toggle button">
+               <span class="navbar-toggler-icon"></span>
+               </button>
+               <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                     {% for top_category in categories %}
+                     <li class="nav-item dropdown">
+                        <a title="{{ top_category.name }}" name="toggle" class="nav-link dropdown-toggle"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                           href="/category/{{ top_category.slug }}">{{ top_category.name }}</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                           {% for sub_category in top_category.subcategories.all %}
+                           <li>
+                              <a class="dropdown-item" title="{{ sub_category.name }}"
+                                 href="/category/{{ sub_category.slug }}">{{ sub_category.name }}</a>
+                              <ul class="dropdown-submenu">
+                                 {% for sub_sub_category in sub_category.subcategories.all %}
+                                 <li><a class="dropdown-item" title="{{ sub_sub_category.name }}"
+                                    href="/category/{{ sub_sub_category.slug }}">{{
+                                    sub_sub_category.name }}</a>
+                                 </li>
+                                 {% endfor %}
+                              </ul>
+                           </li>
+                           {% endfor %}
+                        </ul>
+                     </li>
+                     {% endfor %}
+                  </ul>
+               </div>
+            </div>
+         </nav>
+      </div>
+      <div class="col-lg-2 col-md-3 col-sm-9 col-8 header-actions p-0">
+         <div class="search">
+            <img src="{% static 'images/search.png' %}" alt="search">
+         </div>
+         <div class="user">
+            {% if user.is_authenticated %}
+            <div class="btn-group">
+               <button type="button" class="btn    dropdown-toggle account-dropdown" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+               My Account
+               </button>
+               <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/auth/account">Dashboard</a>
+                  <a class="dropdown-item" href="/auth/logout">Logout</a>
+               </div>
+            </div>
+            {% else %}
+            <a href="/auth" class="small ">
+            <img src="{% static 'images/user.png' %}" alt="user">
+            </a>
+            {% endif %}
+         </div>
+         <div class="cart">
+            <div class="cart-icon-container">
+               <a href="/cart">
+               <img src="{% static 'images/cart.png' %}" alt="cart">
+               </a>
+            </div>
+            <div id="cart-count" class="cart-count"> {{cart_total}}</div>
+         </div>
+      </div>
+   </div>
+</header>

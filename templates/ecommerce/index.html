@@ -1,0 +1,180 @@
+{% extends 'base.html' %} 
+{% block title %} 
+    Ecommerce Store | Home Page 
+{% endblock %}
+{% block meta_tags %} 
+    <meta name="description" content="Premium is a leading retail POS company with scalable solutions for a wide range of market segments. Click here to learn more.">
+{% endblock %}
+{% block content %}
+{% load static %}
+<div class="home mt-1">
+    <div>
+        {% if mainBanners %}
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                {% for banner in mainBanners %}
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}">
+                </button>
+                {% endfor %}
+            </div>
+            <div class="carousel-inner">
+                {% for banner in mainBanners %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ banner.image.url }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ banner.text1 }}</h5>
+                        <p>{{ banner.text2 }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        {% endif %}    
+    </div>
+    
+    <section class="welcome ">
+        <h1 class="welcome-heading w-100 text-center">WELCOME TO THE PRIMIUM TEMPLATE</h1>
+        <div class="row p-5">
+            <div class="welcome-content col-sm-12   col-lg-6 col-md-12 ">
+                What is Lorem Ipsum?
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                Why do we use it?
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                Where does it come from?
+                Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical
+            </div>
+            <div class="welcome-content  col-sm-12  col-lg-6 col-md-12 ">
+                <img src="{% static '/images/company.png' %}" class="img-fluid w-100" alt="" />
+            </div>
+        </div>
+    </section>
+    
+    <div class="row minibanners">
+        <div class="col-lg-4 col-md-6 col-sm-6 minibanner p-0 m-0">
+            {% if miniBanner1.image.url %}
+            <img alt="slider" loading="lazy" width="441" height="360" decoding="async"
+                data-nimg="1" style="color:transparent" src="{{ miniBanner1.image.url }}">
+            <div class="mb-overlay">
+                <div class="mb-content">
+                    <h2>{{ miniBanner1.text1 }}</h2>
+                    <a class="link" href="">
+                    <button class="button" aria-label="button">Shop now</button>
+                    </a>
+                </div>
+            </div>
+            {%  endif %}
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6 minibanner p-0 m-0">
+            {% if miniBanner2.image.url %}
+            <img alt="slider" loading="lazy" width="441" height="360" decoding="async"
+                data-nimg="1" style="color:transparent" src="{{ miniBanner2.image.url }}">
+            <div class="mb-overlay">
+                <div class="mb-content">
+                    <h2>{{ miniBanner2.text1 }}</h2>
+                    <a class="link" href="">
+                    <button class="button" aria-label="button">Shop now</button>
+                    </a>
+                </div>
+            </div>
+            {%  endif %}
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6 minibanner p-0 m-0">
+            {% if miniBanner3.image.url %}
+            <img alt="slider" loading="lazy" width="441" height="360" decoding="async"
+                data-nimg="1" style="color:transparent" src="{{ miniBanner3.image.url }}">
+            <div class="mb-overlay">
+                <div class="mb-content">
+                    <h2>{{ miniBanner3.text1 }}</h2>
+                    <a class="link" href="">
+                    <button class="button" aria-label="button">Shop now</button>
+                    </a>
+                </div>
+            </div>
+            {%  endif %}
+        </div>
+    </div>
+    <!-- You may also Like section -->
+    {% if featuredProducts|length > 0 %}
+    <div class="container-fluid mt-5 text-center ymal">
+        <h2>FEATURED PRODUCTS</h2>
+        <div class="owl-carousel ">
+            {% for product in featuredProducts%}
+            <div class="item mt-5"  >
+                <div class="productListing text-center react-products-listings">
+                    <div class="product text-decoration-none text-left" style="position: relative;">
+                        <span  class="image text-left mb-2 d-block">
+                        <a href="/product/{{product.id}}/">    
+                        <img src="{{ product.images.all.0.image.url }}" alt="Item 1">
+                        </a>
+                        </span>
+                        <div class="caption">
+                            <a href="/product/{{product.id}}/">
+                                <h3 class="name">{{ product.title }}</h3>
+                            </a>
+                        </div>
+                        <p>Price: ${{product.price}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    {% endif %}
+    <div class="deals-container">
+        <div class="row deals2">
+            {% if miniBanner4.image.url %}
+            <div class="col-6 banner2">
+                <div class="banner-image">
+                    <img alt="deal" loading="lazy"     src="{{ miniBanner4.image.url }}">
+                    <div class="deal-overlay"></div>
+                </div>
+                <div class="banner-content2">
+                    <h1>{{ miniBanner4.text1 }}</h1>
+                    <button class="button" aria-label="button">Learn more</button>
+                </div>
+            </div>
+            {% endif %}
+            {% if miniBanner5.image.url %}
+            <div class="col-6 banner2">
+                <div class="banner-image">
+                    <img alt="deal" loading="lazy"     src="{{ miniBanner5.image.url }}">
+                    <div class="deal-overlay"></div>
+                </div>
+                <div class="banner-content2">
+                    <h1>{{ miniBanner5.text1 }}</h1>
+                    <button class="button" aria-label="button">Learn more</button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="services-container">
+        <div class="row services">
+            <div class="col-sm-12 col-md-6 col-lg-3  service-container logo-img"><img alt="logo" loading="lazy"
+                decoding="async" data-nimg="1" style="color:transparent" src="/static/images/logo.png"></div>
+            <div class="col-sm-12 col-md-6 col-lg-3 service-container"><i
+                class="fa-solid fa-phone-volume service-icon"></i><span class="service-info">+(123) 456 789</span>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3 service-container"><i
+                class="fa-solid fa-arrow-rotate-left service-icon"></i><span class="service-info">HUSTLE FREE
+                RETURNS</span> 
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3 service-container"><i
+                class="fa-solid fa-truck-fast service-icon"></i><span class="service-info">LOW SHIPPING RATES</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

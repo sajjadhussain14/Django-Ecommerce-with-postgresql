@@ -1,0 +1,397 @@
+{% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'js/filters.js' %}"></script>
+<div id="category">
+    <div class="container-fluid" id="category-inner">
+        <div class="row">
+            <section id="BreadCrumbs" class="col-12 pt-3">
+                <ol class="breadcrumb bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    {% for label, url in breadcrumbs %}
+                    <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
+                        {% if not forloop.last %}
+                        <a href="/category/{{ url }}">{{ label }}</a>
+                        {% else %}
+                        {{ label }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ol>
+            </section>
+            <section id="SideNav" class="col-lg-2 col-md-12 col-12 filters pt-5-lg pt-3-md pt-1-sm pt-2">
+                <div class="accordion accordion-flush pt-5-lg pt-3-md pt-1-sm pt-2" id="accordionFlush">
+                    <button id="filterby"
+                        class="mb-3 w-100" data-toggle="collapse" data-target="##flush-collapse" aria-expanded="false"
+                        aria-controls="flush-collapse">Filter By</button>
+                    <div id="flush-collapse1" class=" collapse show  border-white border" aria-labelledby="flush-heading"
+                        data-parent="#accordionFlush">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingPrice">
+                                <button class="accordion-button collapsed" type="button" data-toggle="collapse" data-target="#collapsecategorySelected" aria-expanded="false" aria-controls="collapsecategorySelected">
+                                Selected
+                                </button>
+                            </h2>
+                            <div id="collapsecategorySelected" class="accordion-collapse collapse" aria-labelledby="flush-headingPrice">
+                                <div class="accordion-body">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Display the current category -->
+                                        <span class="mx-2">{{ category.name }}</span>
+                                        <!-- Add a cross button to navigate to the parent category -->
+                                        {% if category.parent %}
+                                        <a href="/category/{{ category.parent.slug }}"  >
+                                        <i class="fas fa-times"></i>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    <div id="filter-container">
+                                    </div>
+                                    <script>
+                                        $(document).ready(function() {
+                                        
+                                            {% for key, value in request.GET.items %}
+                                                var key = '{{ key }}';
+                                                var values = '{{ value }}'.split(',');
+                                                $.each(values, function(index, item) {
+                                        
+                                        
+                                                    if (item.trim() !== '') {
+                                                        var filterDiv = '<div class="d-flex align-items-center mt-2">';
+                                                        filterDiv += '<span  class="mx-2 pe-auto"  data-filter="' + item.trim() + '" type="checkbox" value="' + item.trim() + '"> ' + item.trim() + ' <i style="cursor:pointer" class="fas fa-times" onclick="removeFilter(\'' + key + '\', \'' + item.trim() + '\')"></i></span>';
+                                                        filterDiv += '</div>';
+                                                        $('#filter-container').append(filterDiv);
+                                                    }
+                                                });
+                                            {% endfor %}
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item ">
+                            <div id="flush-collapse" class=" collapse show  border-white border" aria-labelledby="flush-heading"
+                                data-parent="#accordionFlush">
+                                <div class="accordion-body border-white">
+                                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                                        <div id="BrandFilter" class="accordion-item border-bottom border-1">
+                                            <h2 class="accordion-header" id="flush-headingTwo">
+                                                <button class="accordion-button collapsed text-uppercase px-0 border-0 fw-bold bg-transparent"
+                                                    type="button" data-toggle="collapse" data-target="#collapseExampleOne" aria-expanded="false"
+                                                    aria-controls="collapseExampleOne">Availability</button>
+                                            </h2>
+                                            <div class="collapse border-0" id="collapseExampleOne">
+                                                <div class="accordion-body px-1">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="availabilityFilter" id="all-items"
+                                                        value="Show All Items" {% if request.GET.availabilityFilter == "Show All Items" %} checked{% endif%}>
+                                                        <label  for="all-items" class="form-check-label btn">Show All Items</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="availabilityFilter"
+                                                        id="out-of-stock-items" value="outofstock" {% if request.GET.availabilityFilter == "outofstock" %} checked{% endif%}>
+                                                        <label for="out-of-stock-items" class="form-check-label btn">Out of Stock Items</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="availabilityFilter" id="in-stock-items"
+                                                        value="instock"  {% if request.GET.availabilityFilter == "instock" %} checked{% endif%}>
+                                                        <label for="in-stock-items" class="form-check-label btn">In Stock Items</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Add a section for Categories -->
+                                        {% if subcategories_to_display %}
+                                        <!-- Add a section for Child Categories with Products -->
+                                        <div id="ChildCategoriesFilter" class="accordion-item border-bottom border-1">
+                                            <h2 class="accordion-header" id="flush-headingChildCategories">
+                                                <button class="accordion-button text-uppercase px-0 border-0 fw-bold bg-transparent collapsed"
+                                                    type="button" data-toggle="collapse" data-target="#collapseChildCategories" aria-expanded="false"
+                                                    aria-controls="collapseChildCategories"> Categories </button>
+                                            </h2>
+                                            <div id="collapseChildCategories" class="border-0 collapse">
+                                                <div class="accordion-body px-1">
+                                                    {% for child_category in subcategories_to_display %}
+                                                    <div class="form-check">
+                                                        <label class="form-check-label text-capitalize">
+                                                        <a href="/category/{{ child_category.slug }}">{{ child_category.name }}</a>
+                                                        </label>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if brands%}
+                                        <!-- Add a section for Brands -->
+                                        <div id="BrandFilter" class="accordion-item border-bottom border-1">
+                                            <h2 class="accordion-header" id="flush-headingBrands">
+                                                <button class="accordion-button text-uppercase px-0 border-0 fw-bold bg-transparent collapsed"
+                                                    type="button" data-toggle="collapse" data-target="#collapseBrands" aria-expanded="false"
+                                                    aria-controls="collapseBrands">Brands</button>
+                                            </h2>
+                                            <div id="collapseBrands" class="border-0 collapse">
+                                                <div class="accordion-body px-1">
+                                                    {% for brand in brands %}
+                                                    <div class="form-check">
+                                                        <input class="form-check-input filter-checkbox" data-filter="brand" type="checkbox"
+                                                            value="{{ brand.name }}">
+                                                        <label class="form-check-label text-capitalize">{{ brand.name }}</label>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% for attr_name, attr_values in attribute_hierarchy.items %}
+                                        <div id="BrandFilter" class="accordion-item border-bottom border-1">
+                                            <h2 class="accordion-header" id="flush-headingTwo"><button
+                                                class="accordion-button text-uppercase px-0 border-0 fw-bold bg-transparent collapsed"
+                                                type="button" data-toggle="collapse" data-target="#collapseExample{{ attr_name }}"
+                                                aria-expanded="false" aria-controls="collapseExample{{ attr_name }}">{{ attr_name }}</button>
+                                            </h2>
+                                            <div id="collapseExample{{ attr_name }}" class="border-0 collapse">
+                                                <div class="accordion-body px-1">
+                                                    {% for attr_value in attr_values %}
+                                                    <div class="form-check">
+                                                        <input class="form-check-input filter-checkbox" data-filter="{{attr_name}}" type="checkbox"
+                                                            value="{{ attr_value }}"><label class="form-check-label   text-capitalize ">
+                                                        {{ attr_value }}
+                                                        </label>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="CategoryProducts" class="col-lg-10 col-md-8 col-12">
+                <div class="row">
+                    <section id="banner-image-container" class="col-12 mb-3"></section>
+                </div>
+                <div class="row">
+                    <section class="col-6 catheading pb-2">
+                        <h1 class=" border-bottom border-2 pb-1 w-100">{{category}}</h1>
+                    </section>
+                    <section id="Pagination" class="col-6 py-0 d-flex mx-auto justify-content-end ">
+                        <nav class="pagination">
+                            <ul class="pagination">
+                                {% if products.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="First">
+                                    &laquo;&laquo; 
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                                    &laquo; 
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% for i in products.paginator.page_range %}
+                                {% if products.number == i %}
+                                <li class="page-item active" aria-current="page">
+                                    {{ i }} 
+                                </li>
+                                {% elif i > products.number|add:'-2' and i < products.number|add:'2' %} 
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                </li>
+                                {% else %}
+                                {% if not products.number|add:'-2' in products.paginator.page_range %}
+                                {% if i == products.paginator.page_range|first|add:'1' %}
+                                <li class="page-item disabled">
+                                    ... 
+                                </li>
+                                {% endif %}
+                                {% elif not products.number|add:'2' in products.paginator.page_range %}
+                                {% if i == products.paginator.page_range|last|add:'-1' %}
+                                <li class="page-item disabled">
+                                    ... 
+                                </li>
+                                {% endif %}
+                                {% else %}
+                                {% if i == products.paginator.page_range|first|add:'1' %}
+                                <li class="page-item disabled">
+                                    ... 
+                                </li>
+                                {% endif %}
+                                {% if i == products.paginator.page_range|last|add:'-1' %}
+                                <li class="page-item disabled">
+                                    ... 
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                {% if products.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                                    &raquo; 
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.paginator.num_pages }}" aria-label="Last">
+                                    &raquo;&raquo; 
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </section>
+                </div>
+                <div id="catproductinner" class="row catproductinner">
+                    <div class="col-lg-6 col-md-12 col-12 categoryselect">
+                        <div class="row">
+                            <div class="col-md mb-2">
+                                <span>Sort:</span>
+                                <select class="form-select two" id="sort" onchange="sortProducts()">
+                                    <option value="default">Default</option>
+                                    <option value="nameAsc">Name (A-Z)</option>
+                                    <option value="nameDesc">Name (Z-A)</option>
+                                    <option value="priceHighLow">Price (High-Low)</option>
+                                    <option value="priceLowHigh">Price (Low-High)</option>
+                                    <option value="brands">Brands</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12 totalproduct">
+                        <div style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none;"></div>
+                        <span
+                            class="text-capitalize catgrey">
+                            <!-- Display current products and total products -->
+                            <p>{{ products.start_index }} - {{ products.end_index }} of Total {{ products.paginator.count }} Products
+                            </p>
+                        </span>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-12 display-mode h4"><a href="javascript:;" id="grid"
+                        class="change-view active text-dark"><i class="fas fa-th"></i></a><a href="javascript:;" id="list"
+                        class="change-view text-dark"><i class="fas fa-list"></i></a></div>
+                </div>
+                <div id="catproducts" class="row ">
+                    {% if products|length > 0 %}
+                    {% for product in products%}
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-6 ">
+                        <div class="productListing text-center react-products-listings">
+                            <div class="product text-decoration-none text-left" style="position: relative;">
+                                <span
+                                    class="image text-left mb-2 d-block">
+                                <a href="/product/{{product.id}}/">
+                                <img id="img502196" src="{{ product.images.all.0.image.url }}" alt="{{ product.title }} image"
+                                    name="{{ product.title }}" class="">
+                                </a>
+                                </span>
+                                <div class="caption">
+                                    <h2 class="brand">{{ product.band }}</h2>
+                                    <h3 class="name">{{ product.title }}</h3>
+                                </div>
+                                <div class="null-reviews"></div>
+                                <h3 class="instock">
+                                    {% if product.in_stock %}
+                                    In Stock
+                                    {% else %}
+                                    <span class="text-danger"> Out of Stock </span>
+                                    {% endif %}
+                                </h3>
+                                <span class="pricing">
+                                <strong class="itemPrice">Price:
+                                ${{product.price }}</strong></span>
+                            </div>
+                            <div class="cart-button text-center"><button class="addtocart" id="addToCartBtn0">Add To Cart</button>
+                            </div>
+                            <div class="cart-button text-center">
+                                <div>
+                                    <a href="/product/{{product.id}}/" class="details"> View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div>
+                        <p>Sorry, there are no products</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div>  </div>
+                    </div>
+                </div>
+            </section>
+            <section id="Pagination" class="col-6 py-0 d-flex mx-auto justify-content-end">
+                <nav class="pagination">
+                    <ul class="pagination">
+                        {% if products.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                            &laquo;&laquo; 
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                            &laquo; 
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% for i in products.paginator.page_range %}
+                        {% if products.number == i %}
+                        <li class="page-item active" aria-current="page">
+                            {{ i }} 
+                        </li>
+                        {% elif i > products.number|add:'-2' and i < products.number|add:'2' %} 
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                        {% else %}
+                        {% if not products.number|add:'-2' in products.paginator.page_range %}
+                        {% if i == products.paginator.page_range|first|add:'1' %}
+                        <li class="page-item disabled">
+                            ... 
+                        </li>
+                        {% endif %}
+                        {% elif not products.number|add:'2' in products.paginator.page_range %}
+                        {% if i == products.paginator.page_range|last|add:'-1' %}
+                        <li class="page-item disabled">
+                            ... 
+                        </li>
+                        {% endif %}
+                        {% else %}
+                        {% if i == products.paginator.page_range|first|add:'1' %}
+                        <li class="page-item disabled">
+                            ... 
+                        </li>
+                        {% endif %}
+                        {% if i == products.paginator.page_range|last|add:'-1' %}
+                        <li class="page-item disabled">
+                            ... 
+                        </li>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                        {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                            &raquo; 
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ products.paginator.num_pages }}" aria-label="Last">
+                            &raquo;&raquo; 
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

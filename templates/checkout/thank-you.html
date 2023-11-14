@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+   /* Custom CSS for styling the thank you page */
+   body {
+   background-color: #f7f7f7;
+   font-family: 'Arial', sans-serif;
+   }
+   .thank-you-container {
+   background-color: #fff;
+   border-radius: 8px;
+   padding: 20px;
+   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+   margin: 20px;
+   }
+   .thank-you-heading {
+   font-size: 36px;
+   text-align: center;
+   margin-bottom: 20px;
+   color: #007bff;
+   font-family: 'Arial', sans-serif;
+   }
+   .order-invoice-numbers {
+   text-align: center;
+   margin-bottom: 20px;
+   font-family: 'Arial', sans-serif;
+   }
+   .address-details p {
+   font-size: 18px;
+   margin-top: 10px;
+   color: #333;
+   font-family: 'Arial', sans-serif;
+   }
+   .order-details-table th, .order-details-table td {
+   text-align: left;
+   font-size: 18px;
+   font-family: 'Arial', sans-serif;
+   }
+   .total-amount {
+   text-align: right;
+   margin-top: 10px;
+   font-weight: bold;
+   font-size: 24px;
+   color: #28a745;
+   font-family: 'Arial', sans-serif;
+   }
+   .thank-you-message {
+   font-size: 20px;
+   text-align: center;
+   margin-top: 20px;
+   color: #333;
+   font-family: 'Arial', sans-serif;
+   }
+   .buttons {
+   margin-top: 20px;
+   text-align: center;
+   }
+   .continue-shopping-btn, .view-orders-btn {
+   padding: 15px 30px;
+   background-color: #007bff;
+   color: #fff;
+   text-decoration: none;
+   border-radius: 5px;
+   margin: 0 10px;
+   font-weight: bold;
+   font-size: 20px;
+   font-family: 'Arial', sans-serif;
+   }
+   .view-orders-btn {
+   background-color: #28a745;
+   }
+</style>
+<div class="container p-5 pt-0">
+   <div class="thank-you-container container p-5">
+      <h2 class="thank-you-heading p-3">Thank You for Your Purchase</h2>
+      <!-- Order and Invoice Numbers along with Additional Fields in Tabular Form -->
+      <table class="table table-bordered order-details-table text-align-left">
+         <tbody>
+            <tr>
+               <th>Payer ID:</th>
+               <td>{{paypal_data.payer_id}}</td>
+            </tr>
+            <tr>
+               <th>Payment ID:</th>
+               <td>{{paypal_data.payment_id}}</td>
+            </tr>
+            <tr>
+               <th>Order Number:</th>
+               <td>{{paypal_data.order.order_number}}</td>
+            </tr>
+            <tr>
+               <th>Invoice Number:</th>
+               <td>{{paypal_data.order.order_number}}</td>
+            </tr>
+            <tr>
+               <th>Payment ID:</th>
+               <td>{{paypal_data.payment_id}}</td>
+            </tr>
+            <tr>
+               <th>Payer ID:</th>
+               <td>{{paypal_data.payer_id}}</td>
+            </tr>
+            <tr>
+               <th>Order Date:</th>
+               <td>{{paypal_data.order.order_date}}</td>
+            </tr>
+            <tr>
+               <th>Payment Mode:</th>
+               <td>{{paypal_data.order.payment_mode}}</td>
+            </tr>
+         </tbody>
+      </table>
+      <div class="d-flex justify-content-between">
+         <!-- Billing Address -->
+         <div>
+            <h2 class="address-title">Billing Address</h2>
+            <div class="address-details">
+               <p><strong>Name:</strong> {{paypal_data.order.billing_address.billing_first_name}}  {{paypal_data.order.billing_address.billing_last_name}}</p>
+               <p><strong>Phone:</strong> {{paypal_data.order.billing_address.billing_phone}}</p>
+               <p><strong>City:</strong> {{paypal_data.order.billing_address.billing_city}}</p>
+               <p><strong>State:</strong> {{paypal_data.order.billing_address.billing_state}}</p>
+               <p><strong>Country:</strong> {{paypal_data.order.billing_address.billing_country}}</p>
+               <p><strong>Address Lane 1:</strong> {{paypal_data.order.billing_address.billing_address_line1}}</p>
+               <p><strong>Address Lane 2:</strong> {{paypal_data.order.billing_address.billing_address_line2}}</p>
+               <!-- Include more billing details as needed -->
+            </div>
+         </div>
+         <!-- Shipping Address -->
+         <div>
+            <h2 class="address-title">Shipping Address</h2>
+            <div class="address-details">
+               <p><strong>Name:</strong> {{paypal_data.order.shipping_address.shipping_first_name}}  {{paypal_data.order.shipping_address.shipping_last_name}}</p>
+               <p><strong>Phone:</strong> {{paypal_data.order.shipping_address.shipping_phone}}</p>
+               <p><strong>City:</strong> {{paypal_data.order.shipping_address.shipping_city}}</p>
+               <p><strong>State:</strong> {{paypal_data.order.shipping_address.shipping_state}}</p>
+               <p><strong>Country:</strong> {{paypal_data.order.shipping_address.shipping_country}}</p>
+               <p><strong>Address Lane 1:</strong> {{paypal_data.order.shipping_address.shipping_address_line1}}</p>
+               <p><strong>Address Lane 2:</strong> {{paypal_data.order.shipping_address.shipping_address_line2}}</p>
+            </div>
+         </div>
+      </div>
+      <div class="order-details">
+         <h2>Order Details</h2>
+         <table class="table table-striped order-details-table">
+            <thead>
+               <tr>
+                  <th>Product</th>
+                  <th>Attributes</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+               </tr>
+            </thead>
+            <tbody>
+               {% for product_id, item in paypal_data.order.cart.items %}
+               <tr>
+                  <td>{{item.title}}</td>
+                  <td>
+                     {% for key, value in item.attributes.items %}
+                     <p>
+                        <span>{{ key }}:</span>
+                        <span class="badge badge-primary badge-pill text-dark">{{ value }}</span>
+                     </p>
+                     {% endfor %}
+                  </td>
+                  <td>{{item.price}}</td>
+                  <td>{{item.quantity}}</td>
+                  <td> {{item.price_total}}</td>
+               </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+         <p class="total-amount">Total Amount: ${{paypal_data.order.amount.total}} USD</p>
+      </div>
+      <p class="thank-you-message">
+         Thank you for choosing our products. Your order has been successfully processed, and we've sent a confirmation email to your inbox. We appreciate your business and hope you enjoy your purchase.
+      </p>
+   </div>
+</div>
+{% endblock %}

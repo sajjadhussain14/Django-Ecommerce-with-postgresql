@@ -1,0 +1,137 @@
+{% extends 'base.html' %} {% block title %} Premium Ecommerce Store | Cart Page {% endblock %}
+{% block content %}
+{% load cart_products_price %}
+<section class="h-100 h-custom mt-2">
+    <div class="container-fluid   h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <h5 class="mb-3">
+                                    <a href="/cart/back-to-shop" class="  btn btn-light text-dark">
+                                    <i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a>
+                                </h5>
+                                <hr>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <p class="mb-0">You have <strong> {{ total_items }} </strong> items in your cart</p>
+                                    </div>
+                                    <div>
+                                        <button onclick="clearcart('{{ csrf_token }}')" type="button" class="btn btn-outline-secondary btn-rounded  p-0 lead"  > <span class="small p-1" onclick="clearcart('{{ csrf_token }}')">Clear Cart <span> <i class="fa fa-remove p-2" style="font-size:18px" onclick="clearcart('{{ csrf_token }}')"></i></button>
+                                    </div>
+                                </div>
+                                {% for product_id, item in cart_items.items %}
+                                <div class="card mb-3">
+                                    <div class="card-body ">
+                                        <div class="d-flex justify-content-between row">
+                                            <div class="d-flex flex-row align-items-center col-8">
+                                                <div col-1>
+                                                    <a href="/product/{{item.product_id}}"> 
+                                                    <img src="{{item.image_url}}"
+                                                        class="img-fluid rounded-3" alt="Shopping item"
+                                                        style="width:65px"
+                                                        >
+                                                    </a>    
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h5>{{item.title}}</h5>
+                                                    <div class="d-flex flex-row align-items-center  w-100 ">
+                                                        <button class="btn shadow-none" id="increment" onclick="incrementQuantity('quantity-{{product_id}}','{{product_id}}','{{ csrf_token }}')">+</button>
+                                                        <div class="form-group col-2">
+                                                            <input type="number" value="{{item.quantity}}" class="form-control " id="quantity-{{product_id}}" value="1" min="1">
+                                                        </div>
+                                                        <button class="btn shadow-none" id="decrement" onclick="decrementQuantity('quantity-{{product_id}}','{{product_id}}','{{ csrf_token }}')">-</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex   align-items-center   col-4 text-end  ">
+                                                <div class="p-2">
+                                                    <h5 class="mb-0"> <span class="p-1" >{{item.quantity}}</span><span class=" ">X</span>  <span class=" ">${{item.price}}</span><span class=" ">=</span><strong>$
+                                                    {{item.price_total}}     
+                                                        </strong>
+                                                    </h5>
+                                                </div>
+                                                <a   href="#!" class="p-2" onclick="removeItem('{{product_id}}','{{ csrf_token }}')"  style="color: #cecece;"><i
+                                                    class="fas fa-trash-alt"></i></a>
+                                            </div>
+                                            <ul class="list-group mt-3">
+                                                {% for key, value in item.attributes.items %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>{{ key }}:</span>
+                                                    <span class="badge badge-primary badge-pill text-dark">{{ value }}</span>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="card   text-dark rounded-3 shadow" style="background-color: #fbfbfb;">
+                                    <div class="card-body">
+                                        <h6 class="mb-0  p-3 ">Shipping Options</h6>
+                                        <div class="d-flex justify-content-between">
+                                            <ul style="list-style-type: none" class="p-2 m-0">
+                                                <li class="shipotp mt-2 mb-2" name="shipotp" id="shipotp_1" value="1"
+                                                    onclick="updateShippingMethodRequest('NICKSHIPPING',0.00,'{{ csrf_token }}')">
+                                                    <label for="shipotp">
+                                                    <input type="radio" name="shipotp" {% if shippingData.shipping_method == "NICKSHIPPING" %}checked="checked"{% endif %}> NICKSHIPPING ($0.00) 
+                                                    </label>
+                                                </li>
+                                                <li class="shipotp mt-2 mb-2" name="shipotp" id="shipotp_3" value="3"
+                                                    onclick="updateShippingMethodRequest('UPS 2ND DAY AIR',1.00,'{{ csrf_token }}')">
+                                                    <label for="shipotp">
+                                                    <input type="radio" name="shipotp" {% if shippingData.shipping_method == "UPS 2ND DAY AIR" %}checked="checked"{% endif %}> UPS 2ND DAY AIR ($1.00)
+                                                    </label>
+                                                </li>
+                                                <li class="shipotp mt-2 mb-2" name="shipotp" id="shipotp_4" value="4"
+                                                    onclick="updateShippingMethodRequest('FEDEX 1ST OVERNIGHT',2.00,'{{ csrf_token }}')">
+                                                    <label for="shipotp">
+                                                    <input type="radio" name="shipotp" {% if shippingData.shipping_method == "FEDEX 1ST OVERNIGHT" %}checked="checked"{% endif %}> FEDEX 1ST OVERNIGHT ($2.00)
+                                                    </label>
+                                                </li>
+                                                <li class="shipotp mt-2 mb-2" name="shipotp" id="shipotp_13" value="13"
+                                                    onclick="updateShippingMethodRequest('UPS 2ND DAY AIR AM',3.00,'{{ csrf_token }}')">
+                                                    <label for="shipotp">
+                                                    <input type="radio" name="shipotp" {% if shippingData.shipping_method == "UPS 2ND DAY AIR AM" %}checked="checked"{% endif %}> UPS 2ND DAY AIR AM ($3.00)
+                                                    </label>
+                                                </li>
+                                                <li class="shipotp mt-2 mb-2" name="shipotp" id="shipotp_18" value="18"
+                                                    onclick="updateShippingMethodRequest('FEDEX 2 DAY',5.00,'{{ csrf_token }}')">
+                                                    <label for="shipotp">
+                                                    <input type="radio" name="shipotp" {% if shippingData.shipping_method == "FEDEX 2 DAY" %}checked="checked"{% endif %}> FEDEX 2 DAY ($5.00)
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <hr class="my-4">
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Subtotal</p>
+                                            <p class="mb-2">${{cart_subtotal}}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Shipping</p>
+                                            <p class="mb-2">${{shippingData.shipping_amount}}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-4">
+                                            <p class="mb-2">Grand Total</p>
+                                            <p class="mb-2">${{grand_total}}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-center mb-4">
+                                            <a  {% if cart_items %} href="/checkout"  {% else %}  href="#"  {% endif %}      class="btn button p-2">Checkout <i
+                                                class="fas fa-long-arrow-alt-right ms-2"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

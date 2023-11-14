@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% block title %} ABC Store - Account Settings {% endblock %}
+{% block content %}
+<div class="container light-style flex-grow-1 container-p-y">
+    <h4 class="font-weight-bold py-3 mb-4">
+        Account settings
+    </h4>
+    <form id="account-update-form">
+        {% csrf_token %}
+        <div class="card overflow-hidden mb-5 p-2">
+            <div class="row no-gutters row-bordered row-border-light">
+                <div class="col-md-3 pt-0">
+                    <div class="list-group list-group-flush account-settings-links">
+                        <a class="list-group-item list-group-item-action active" data-toggle="list"
+                            href="#account-general">General</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-change-password">Change password</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-info">Info</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list" href="#wish-list">Wish
+                            List</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#billing-address">Billing Address</a>
+                        <a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#shipping-address">Shipping Address</a>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="account-general">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Username</label>
+                                    <input id="username" type="text" class="form-control mb-1" value="{{ user.email }}"
+                                        disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" name="first_name"
+                                        value="{{ user.first_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" name="last_name"
+                                        value="{{ user.last_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">E-mail</label>
+                                    <input type="text" class="form-control mb-1" value="{{ user.email }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-change-password">
+                            <div class="card-body pb-2">
+                                <form id="password-update-form">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label class="form-label">Current password</label>
+                                        <input id="current_password" type="password" class="form-control"
+                                            name="current_password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">New password</label>
+                                        <input id="new_password1" type="password" class="form-control"
+                                            name="new_password1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Repeat new password</label>
+                                        <input id="new_password2" type="password" class="form-control"
+                                            name="new_password2">
+                                    </div>
+                                    <div class="form-group mt-3 d-flex justify-content-center">
+                                        <button onclick="changePassword('{{ csrf_token }}')" id="update-password-btn"
+                                            type="button" class="btn btn-primary">Update Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="account-info">
+                            <div class="card-body pb-2">
+                                <div class="form-group">
+                                    <label class="form-label">Bio</label>
+                                    <textarea class="form-control" name="bio" rows="5">{{ user.bio }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Date of Birth</label>
+                                    <input type="text" class="form-control" id="birthday-input"
+                                        value="{{ user.birthday }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Country</label>
+                                    <select class="custom-select" name="country">
+                                        <option value="USA" {% if user.country == "USA" %}selected{% endif %}>USA</option>
+                                        <option value="Canada" {% if user.country == "Canada" %}selected{% endif %}>Canada</option>                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr class="border-light m-0">
+                            <div class="card-body pb-2">
+                                <h6 class="mb-4">Contacts</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="text" class="form-control" name="phone" value="{{ user.phone }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="wish-list">
+                            <div class="container">
+                                <h1 class="mt-5 mb-4">Your Wishlist</h1>
+                                {% if wishlist_items %}
+                                <ul class="list-group">
+                                    {% for item in wishlist_items %}
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <img src="{{ item.product.images.first.image.url }}"
+                                                    alt="{{ item.product.title }}" class="img-fluid" width="100">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5>{{ item.product.title }}</h5>
+                                                <p>Price: ${{ item.product.price }}</p>
+                                                <h6>Attributes:</h6>
+                                                <input type="hidden" id="{{ item.product.id }}-wish-attr-values"
+                                                    name="abc" value="{{ item.attributes }}" />
+                                                <ul class="list-group list-group-flush">
+                                                    {% for key, value in item.attributes.items %}
+                                                    <li class="list-group-item">{{ key }}: {{ value }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-3 text-end">
+                                                <button type="button" data-product-id="{{ item.product.id }}"
+                                                    class="add-to-cart-btn btn btn-primary btn-sm mb-3"
+                                                    onclick="toggleCartAndWishlist(this, '{{ csrf_token }}')">Add to
+                                                    Cart</button>
+                                                <button type="button" data-product-id="{{ item.product.id }}"
+                                                    class="remove-from-wishlist-btn btn btn-danger btn-sm mb-3"
+                                                    onclick="removeFromWishlist(this, '{{ csrf_token }}')">Remove</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <p class="mt-4">Your wishlist is empty.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="billing-address">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" name="billing_first_name"
+                                        value="{{ user.billing_first_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" name="billing_last_name"
+                                        value="{{ user.billing_last_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address - Line 1 *</label>
+                                    <input type="text" class="form-control" name="billing_address_line1"
+                                        value="{{ user.billing_address_line1 }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address - Line 2</label>
+                                    <input type="text" class="form-control" name="billing_address_line2"
+                                        value="{{ user.billing_address_line2 }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" class="form-control" name="billing_city"
+                                        value="{{ user.billing_city }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State *</label>
+                                    <input type="text" class="form-control" name="billing_state"
+                                        value="{{ user.billing_state }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Country *</label>
+                                    <input type="text" class="form-control" name="billing_country"
+                                        value="{{ user.billing_country }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="text" class="form-control" name="billing_phone"
+                                        value="{{ user.billing_phone }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="shipping-address">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" name="shipping_first_name"
+                                        value="{{ user.shipping_first_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" name="shipping_last_name"
+                                        value="{{ user.shipping_last_name }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address - Line 1 *</label>
+                                    <input type="text" class="form-control" name="shipping_address_line1"
+                                        value="{{ user.shipping_address_line1 }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address - Line 2</label>
+                                    <input type="text" class="form-control" name="shipping_address_line2"
+                                        value="{{ user.shipping_address_line2 }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" class="form-control" name="shipping_city"
+                                        value="{{ user.shipping_city }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State *</label>
+                                    <input type="text" class="form-control" name="shipping_state"
+                                        value="{{ user.shipping_state }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Country *</label>
+                                    <input type="text" class="form-control" name="shipping_country"
+                                        value="{{ user.shipping_country }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="text" class="form-control" name="billing_phone"
+                                        value="{{ user.billing_phone }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right mt-3 text-end m-2 mb-2">
+                    <button id="save-changes-button" type="button" class="btn btn-primary">Save changes</button>&nbsp;
+                    <button type="button" class="btn btn-default">Cancel</button>
+                </div>
+            </div>
+    </form>
+</div>
+{% endblock %}

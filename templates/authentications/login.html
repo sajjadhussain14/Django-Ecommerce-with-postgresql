@@ -1,0 +1,59 @@
+{% extends 'base.html' %} {% block title %} ABC Store {% endblock %}
+{% block content %}
+<section class="vh-100">
+    <script>
+        // Check if the user is already logged in
+        {% if user.is_authenticated %}
+            window.location.href = "/"; // Redirect to the home page
+        {% endif %}
+    </script>
+    <div class="container-fluid h-custom">
+        <div class="row card d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-8 col-lg-8 col-xl-8  ">
+                {% if messages %}
+                <div class="alert alert-danger alert-dismissible fade show p-2" role="alert">
+                    <button type="button" class="btn-close p-0 m-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <ul class="list-unstyled messages">
+                        {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
+                <form method="post" action="/auth/">
+                    {% csrf_token %}
+                    <!-- Email input -->
+                    <div class="form-outline mb-4">
+                        <input type="text" id="id_username" name="username" class="form-control form-control-lg"
+                            placeholder="Enter your username" />
+                        <label class="form-label" for="id_username">Username</label>
+                    </div>
+                    <!-- Password input -->
+                    <div class="form-outline mb-3">
+                        <input type="password" id="id_password" name="password" class="form-control form-control-lg"
+                            placeholder="Enter password" />
+                        <label class="form-label" for="id_password">Password</label>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Checkbox -->
+                        <div class="form-check mb-0">
+                            <input class="form-check-input me-2" type="checkbox" value="1" name="remember_me" id="id_remember_me" />
+                            <label class="form-check-label" for="id_remember_me">
+                            Remember me
+                            </label>
+                        </div>
+                        <a href="/auth/password_reset/" class="text-body">Forgot password?</a>
+                    </div>
+                    <div class="text-center text-lg-start mt-4 pt-2">
+                        <button type="submit" class="btn btn-primary btn-lg"
+                            style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+                        <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="/auth/sign-up"
+                            class="link-danger">Register</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

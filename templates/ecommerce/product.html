@@ -1,0 +1,224 @@
+{% extends 'base.html' %} 
+{% block title %} Premium Ecommerce Store | Product Page {% endblock %}
+{% block content %}
+<style>
+</style>
+<div class="main-content-container   mt-3 ">
+    <!-- Breadcrumbs -->
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="breadcrumbs">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                {% for label, url in breadcrumbs %}
+                <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
+                    {% if not forloop.last %}
+                    <a href="/category/{{ url }}">{{ label }}</a>
+                    {% else %}
+                    {{ label }}
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <!-- Product Image and Detail Section -->
+    <div class="row">
+        <div class="col-lg-6 detail-img-container">
+            <div class="row">
+                <div class="col-sm-2">
+                    {% for image in product.images.all %}
+                    <a href="{{ image.image.url }}"
+                        data-zoom-id="zoomer"
+                        data-image="{{ image.image.url }}">
+                    <img src="{{ image.image.url }}"
+                        height="100px">
+                    </a>
+                    {% endfor %}                  
+                </div>
+                <div class="col-sm-9">
+                    <a class="MagicZoom" id="zoomer"
+                        href="{{ product.images.all.0.image.url }}"
+                        data-options="zoomPosition: inner">
+                    <img src="{{ product.images.all.0.image.url }}"
+                        class="img-responsive center-block" alt="{{ product.title}}" />
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="product-details-container">
+                <div class="product-name">
+                    <p> {{product.title}}</p>
+                </div>
+                <div class="details-inner">
+                    <div class="product-code">
+                        <span>Product Code:</span>
+                        <span>{{product.id}}</span>
+                    </div>
+                    <div class="product-brand">
+                        <span>Brand:</span>
+                        <span>{{product.brand}}</span>
+                    </div>
+                    <p id="avail"><strong>availability:</strong><span>
+                        {% if product.in_stock %}
+                        <i class="fas fa-check"></i>
+                        In Stock
+                        {% else %}
+                        <span class="text-danger"> Out of Stock </span>
+                        {% endif %}</span>
+                    </p>
+                    <p id="pcode"><strong>UPC:</strong><span> {{product.upc}}</span></p>
+                    <p >
+                    <form id="add-to-cart-form" name="attr-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        {% for attribute_name, values in attribute_values.items %}
+                        <label for="{{ attribute_name }}">{{ attribute_name }}</label>
+                        <select class="form-control" id="{{ attribute_name }}" name="{{ attribute_name|slugify }}">
+                            <option value="">Select {{ attribute_name }}</option>
+                            {% for value in values %}
+                            <option value="{{ value }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endfor %}
+                    </form>
+                    </p>
+                    <div class="wishlistbtn">
+                        <button href="#" type="button" class="addTocart" onclick="addToWishList('{{ product.id }}', '{{ csrf_token }}')"
+                            value="{{product.id}}" id="add-to-cart-{{product.id}}">Add to Wish List</button>
+                    </div>
+                    <div class="wishlistbtn">
+                        <button type="button" class="addTocart" onclick="addToCart('{{ product.id }}','{{ csrf_token }}')">Add to Cart</button>
+                        <!--- <button href="#" type="button" class="addTocart" onclick="addToCart(this, '{{ csrf_token }}')"
+                            value="{{product.id}}" id="add-to-cart-{{product.id}}">Add to cart</button>--->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Description & Review Section -->
+    <div class="product-desc container mt-5 ">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#description"
+                    type="button" role="tab" aria-controls="home" aria-selected="true">Description</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                    type="button" role="tab" aria-controls="profile" aria-selected="false">Review</button>
+            </li>
+        </ul>
+        <div class="tab-content mt-3">
+            <!-- Description Section -->
+            <div id="description" class="tab-pane fade show active">
+                <h3>Product Description</h3>
+                <p>{{product.description}}</p>
+            </div>
+            <!-- Reviews Section -->
+            <div id="reviews" class="tab-pane fade">
+                <h3>Product Reviews</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="review">Review:</label>
+                        <textarea class="form-control" id="review" name="review" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Rating:</label>
+                        <select class="form-control" id="rating" name="rating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- You may also Like section -->
+    <div class=" mt-5 text-center ymal p-5">
+        <h2>You May Also Like</h2>
+        <div class="owl-carousel">
+            {% for related_product in related_products %}
+            <div class="item mt-5">
+                <div class="productListing text-center react-products-listings">
+                    <div class="product text-decoration-none text-left" style="position: relative;">
+                        <span  class="image text-left mb-2 d-block">
+                        <a href="/product/{{related_product.id}}/">    
+                        <img src="{{ related_product.images.first.image.url }}"
+                            alt="Item 1">
+                        </a>     
+                        </span>     
+                        <div class="caption">
+                            <a href="/product/{{related_product.id}}/">
+                                <h3 class="name">{{ related_product.title }}</h3>
+                            </a>
+                        </div>
+                        <p>Price: ${{related_product.price}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="modal fade" id="productProfile" tabindex="-1" role="dialog" aria-labelledby="productProfileLabel"
+        aria-hidden="true" style="z-index:99999;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productProfileLabel">Product Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% include 'cart/cart-popup-model.html' %}
+<script>
+    //  DO NOT REMOVE THIS CODE FROM HERE
+    // OWL CAROUSEL
+    $(document).ready(function(){
+        $(".owl-carousel").owlCarousel({
+            items: 5, // Number of items to display in a row
+            loop: true, // Infinite loop
+            margin: 10, // Space between items
+            responsiveClass:true,
+            responsive:{
+                0:{
+                    items:1,
+                    nav:true,
+                },
+                600:{
+                    items:3,
+                    nav:true,
+                },
+                1000:{
+                    items:5,
+                    nav:true,
+                    loop:true,
+                }
+            }
+        });
+    });
+    // Get a reference to the button and the modal
+    const openModalBtn = document.getElementById("add-to-cart-{{product.id}}");
+    const myModal = new bootstrap.Modal(document.getElementById("modalCart"));
+</script>
+{% endblock %}
